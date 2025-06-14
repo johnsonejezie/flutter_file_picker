@@ -34,6 +34,7 @@ class FilePickerDelegate(
     var allowedExtensions: ArrayList<String?>? = null
     var eventSink: EventSink? = null
     var bytes: ByteArray? = null
+    var limit: Int? = null
 
     fun setEventHandler(eventSink: EventSink?) {
         this.eventSink = eventSink

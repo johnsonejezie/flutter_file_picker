@@ -18,7 +18,9 @@ class _FilePickerDemoState extends State<FilePickerDemo> {
   final _dialogTitleController = TextEditingController();
   final _initialDirectoryController = TextEditingController();
   final _fileExtensionController = TextEditingController();
+  final _limitController = TextEditingController();
   String? _extension;
+  int? _limit;
   bool _isLoading = false;
   bool _lockParentWindow = false;
   bool _userAborted = false;
@@ -56,6 +58,10 @@ class _FilePickerDemoState extends State<FilePickerDemo> {
     super.initState();
     _fileExtensionController
         .addListener(() => _extension = _fileExtensionController.text);
+    _limitController.addListener(() {
+      final text = _limitController.text;
+      _limit = text.isEmpty ? null : int.tryParse(text);
+    });
   }
 
   Widget _buildFilePickerResultsWidget({
@@ -88,6 +94,7 @@ class _FilePickerDemoState extends State<FilePickerDemo> {
         initialDirectory: _initialDirectoryController.text,
         lockParentWindow: _lockParentWindow,
         withData: true,
+        limit: _limit,
       ))
           ?.files;
       hasUserAborted = pickedFiles == null;
@@ -400,6 +407,22 @@ class _FilePickerDemoState extends State<FilePickerDemo> {
                               controller: _fileExtensionController,
                               keyboardType: TextInputType.text,
                               maxLength: 15,
+                            ),
+                          )
+                        : SizedBox(),
+                    _multiPick
+                        ? SizedBox(
+                            width: 400,
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Selection Limit',
+                                hintText: 'e.g., 5 (leave empty for no limit)',
+                                helperText: 'Maximum number of files to select',
+                              ),
+                              controller: _limitController,
+                              keyboardType: TextInputType.number,
+                              maxLength: 3,
                             ),
                           )
                         : SizedBox(),

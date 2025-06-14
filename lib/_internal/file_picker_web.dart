@@ -51,6 +51,7 @@ class FilePickerWeb extends FilePicker {
     bool lockParentWindow = false,
     bool readSequential = false,
     int compressionQuality = 0,
+    int? limit,
   }) async {
     if (type != FileType.custom && (allowedExtensions?.isNotEmpty ?? false)) {
       throw Exception(
@@ -83,6 +84,11 @@ class FilePickerWeb extends FilePicker {
       final FileList files = uploadInput.files!;
       final List<PlatformFile> pickedFiles = [];
 
+      // Apply limit if specified
+      final int filesToProcess = (limit != null && limit > 0)
+          ? (files.length > limit ? limit : files.length)
+          : files.length;
+
       void addPickedFile(
         File file,
         Uint8List? bytes,
@@ -104,7 +110,7 @@ class FilePickerWeb extends FilePicker {
           readStream: readStream,
         ));
 
-        if (pickedFiles.length >= files.length) {
+        if (pickedFiles.length >= filesToProcess) {
           if (onFileLoading != null) {
             onFileLoading(FilePickerStatus.done);
           }
@@ -112,7 +118,7 @@ class FilePickerWeb extends FilePicker {
         }
       }
 
-      for (int i = 0; i < files.length; i++) {
+      for (int i = 0; i < filesToProcess; i++) {
         final File? file = files.item(i);
         if (file == null) {
           continue;

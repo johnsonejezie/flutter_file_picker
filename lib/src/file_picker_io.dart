@@ -32,13 +32,14 @@ class FilePickerIO extends FilePicker {
     Function(FilePickerStatus)? onFileLoading,
     @Deprecated(
         'allowCompression is deprecated and has no effect. Use compressionQuality instead.')
-    bool? allowCompression = false,
+    bool allowCompression = false,
     bool allowMultiple = false,
-    bool? withData = false,
+    bool withData = false,
     int compressionQuality = 0,
-    bool? withReadStream = false,
+    bool withReadStream = false,
     bool lockParentWindow = false,
     bool readSequential = false,
+    int? limit,
   }) =>
       _getPath(
         type,
@@ -49,6 +50,7 @@ class FilePickerIO extends FilePicker {
         withData,
         withReadStream,
         compressionQuality,
+        limit,
       );
 
   @override
@@ -75,12 +77,13 @@ class FilePickerIO extends FilePicker {
   Future<FilePickerResult?> _getPath(
     FileType fileType,
     bool allowMultipleSelection,
-    bool? allowCompression,
+    bool allowCompression,
     List<String>? allowedExtensions,
     Function(FilePickerStatus)? onFileLoading,
-    bool? withData,
-    bool? withReadStream,
-    int? compressionQuality,
+    bool withData,
+    bool withReadStream,
+    int compressionQuality,
+    int? limit,
   ) async {
     final String type = fileType.name;
     if (type != 'custom' && (allowedExtensions?.isNotEmpty ?? false)) {
@@ -108,6 +111,7 @@ class FilePickerIO extends FilePicker {
         'allowCompression': allowCompression,
         'withData': withData,
         'compressionQuality': compressionQuality,
+        'limit': limit,
       });
 
       if (result == null) {
@@ -120,7 +124,7 @@ class FilePickerIO extends FilePicker {
         platformFiles.add(
           PlatformFile.fromMap(
             platformFileMap,
-            readStream: withReadStream!
+            readStream: withReadStream
                 ? File(platformFileMap['path']).openRead()
                 : null,
           ),

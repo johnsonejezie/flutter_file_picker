@@ -58,7 +58,10 @@ object FileUtils {
 
             when {
                 data.clipData != null -> {
-                    for (i in 0 until data.clipData!!.itemCount) {
+                    val itemCount = data.clipData!!.itemCount
+                    val maxItems = if (limit != null && limit > 0) minOf(itemCount, limit) else itemCount
+
+                    for (i in 0 until maxItems) {
                         var uri = data.clipData!!.getItemAt(i).uri
                         uri = processUri(activity, uri, compressionQuality)
                         addFile(activity, uri, loadDataToMemory, files)
@@ -88,7 +91,10 @@ object FileUtils {
 
                 data.extras?.containsKey("selectedItems") == true -> {
                     val fileUris = getSelectedItems(data.extras!!)
-                    fileUris?.filterIsInstance<Uri>()?.forEach { uri ->
+                    val uriList = fileUris?.filterIsInstance<Uri>() ?: emptyList()
+                    val maxItems = if (limit != null && limit > 0) minOf(uriList.size, limit) else uriList.size
+
+                    uriList.take(maxItems).forEach { uri ->
                         addFile(activity, uri, loadDataToMemory, files)
                     }
                     finishWithSuccess(files)
@@ -184,6 +190,7 @@ object FileUtils {
             withData: Boolean?,
             allowedExtensions: ArrayList<String?>?,
             compressionQuality: Int? = 0,
+            limit: Int? = null,
             result: MethodChannel.Result
         ) {
             if (this?.setPendingMethodCallResult(result) == false) {
@@ -201,6 +208,7 @@ object FileUtils {
             if (compressionQuality != null) {
                 this?.compressionQuality = compressionQuality
             }
+            this?.limit = limit
 
             this?.startFileExplorer()
         }

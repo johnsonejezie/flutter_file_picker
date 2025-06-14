@@ -33,6 +33,7 @@ class FilePickerWindows extends FilePicker {
     bool lockParentWindow = false,
     bool readSequential = false,
     int compressionQuality = 0,
+    int? limit,
   }) async {
     final port = ReceivePort();
     await Isolate.spawn(

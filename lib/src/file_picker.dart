@@ -89,6 +89,14 @@ abstract class FilePicker extends PlatformInterface {
   ///
   /// Note: This requires the User Selected File Read entitlement on macOS.
   ///
+  /// [limit] specifies the maximum number of files that can be selected when
+  /// [allowMultiple] is true. If null or 0, no limit is enforced.
+  ///
+  /// **Platform Support for Native Limits:**
+  /// - **iOS 14+**: Uses PHPickerViewController's native selection limit
+  /// - **Android 13+**: Uses PickMultipleVisualMedia for media files with native limit support
+  /// - **Other platforms**: Client-side limit enforcement after selection
+  ///
   /// Returns `null` if aborted.
   Future<FilePickerResult?> pickFiles({
     String? dialogTitle,
@@ -105,6 +113,7 @@ abstract class FilePicker extends PlatformInterface {
     bool withReadStream = false,
     bool lockParentWindow = false,
     bool readSequential = false,
+    int? limit,
   }) async =>
       throw UnimplementedError('pickFiles() has not been implemented.');
 

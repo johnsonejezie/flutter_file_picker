@@ -33,7 +33,7 @@ A package that allows you to use the native file explorer to pick single or mult
 * Different default type filtering (media, image, video, audio or any)
 * Picking directories
 * Picking both files and directories simultaneously
-* Load file data immediately into memory (`Uint8List`) if needed; 
+* Load file data immediately into memory (`Uint8List`) if needed;
 * Open a save-file / save-as dialog (a dialog that lets the user specify the drive, directory, and name of a file to save)
 
 If you have any feature that you want to see in this package, please feel free to issue a suggestion. 🎉
@@ -100,6 +100,17 @@ FilePickerResult? result = await FilePicker.platform.pickFiles(
   allowedExtensions: ['jpg', 'pdf', 'doc'],
 );
 ```
+#### Multiple files with selection limit
+```dart
+FilePickerResult? result = await FilePicker.platform.pickFiles(
+  allowMultiple: true,
+  limit: 5, // Limit selection to 5 files
+);
+```
+**Platform Support for Native Limits:**
+- **iOS 14+**: Uses PHPickerViewController's native selection limit
+- **Android 13+**: Uses PickMultipleVisualMedia for media files with native limit support
+- **Other platforms**: Client-side limit enforcement after selection
 #### Pick a directory
 ```dart
 String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
@@ -156,7 +167,7 @@ FilePickerResult? result = await FilePicker.platform.pickFiles();
 if (result != null) {
   Uint8List fileBytes = result.files.first.bytes;
   String fileName = result.files.first.name;
-  
+
   // Upload file
   await FirebaseStorage.instance.ref('uploads/$fileName').putData(fileBytes);
 }
