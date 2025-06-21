@@ -59,7 +59,8 @@ object FileUtils {
             when {
                 data.clipData != null -> {
                     val itemCount = data.clipData!!.itemCount
-                    val maxItems = if (limit != null && limit > 0) minOf(itemCount, limit) else itemCount
+                    val currentLimit = limit
+                    val maxItems = if (currentLimit != null && currentLimit > 0) minOf(itemCount, currentLimit) else itemCount
 
                     for (i in 0 until maxItems) {
                         var uri = data.clipData!!.getItemAt(i).uri
@@ -92,7 +93,8 @@ object FileUtils {
                 data.extras?.containsKey("selectedItems") == true -> {
                     val fileUris = getSelectedItems(data.extras!!)
                     val uriList = fileUris?.filterIsInstance<Uri>() ?: emptyList()
-                    val maxItems = if (limit != null && limit > 0) minOf(uriList.size, limit) else uriList.size
+                    val currentLimit = limit
+                    val maxItems = if (currentLimit != null && currentLimit > 0) minOf(uriList.size, currentLimit) else uriList.size
 
                     uriList.take(maxItems).forEach { uri ->
                         addFile(activity, uri, loadDataToMemory, files)
